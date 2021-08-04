@@ -41,8 +41,9 @@ public class listaAdyacencia <E,T> {
     }
     public void insertArista(nodoVertice<E,T> primero, T valor, nodoVertice<E,T> segundo){
         nodoArista<E,T> nueva = new nodoArista<E,T>(valor);
+        nodoArista<E,T> nueva2 = new nodoArista<E,T>(valor);
         insertArista(primero, segundo, nueva);
-        insertArista(segundo, primero, nueva);
+        insertArista(segundo, primero, nueva2);
     }
     public void insertArista(nodoVertice<E,T> primero, nodoVertice<E,T> segundo, nodoArista<E,T> nueva){
         nueva.setDireccionVertice(segundo);
@@ -58,9 +59,11 @@ public class listaAdyacencia <E,T> {
         imprimir(root, root.getAdjacentArista(), root);
     }
     public void imprimir(nodoVertice<E,T> n, nodoArista<E,T> next, nodoVertice<E,T> aux){
-        System.out.print("----"+n.getValue());
-        if(next != null)
+        System.out.print("--"+n.getValue());
+        if(next != null){
+            System.out.print("--"+next.getValue());
             imprimir(next.getDireccionVertice(),next.getSiguiente(), aux);
+        }
         else if (aux.getNextVertice()!=null){
             System.out.println("\n");
             imprimir(aux.getNextVertice(),aux.getNextVertice().getAdjacentArista(),aux.getNextVertice());
