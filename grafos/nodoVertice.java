@@ -19,4 +19,5 @@ public class nodoVertice<E,T> {
     public void setVisitado(boolean value){this.visitado = value;}
     public int getAcumulado(){return acumulado;}
     public void setAcumulado(int acumulado){this.acumulado = acumulado;}
+
 }

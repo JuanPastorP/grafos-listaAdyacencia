@@ -1,4 +1,4 @@
-public class ejercicio5 {
+public class ejercicio4 {
     public static void main(String[] args) {
         String[] arr = new String[11];
         arr[0]="words";

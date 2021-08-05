@@ -13,12 +13,15 @@ public class test {
         grafo.insertArista("Vidal", 7, "Pedro");
         grafo.insertArista("Vidal", 7, "Antonio");
         grafo.imprimir();
+
         System.out.println("\n");
         grafo.recorridoBFS();
         grafo.vaciarVisitas();
+
         System.out.println("\n");
         grafo.recorridoDFS();
         grafo.vaciarVisitas();
+        
         System.out.println("\n");
         grafo.realizarDijstra();
         grafo.imprimirDijstra();

@@ -1,6 +1,7 @@
 public class listaAdyacencia <E,T> {
     private nodoVertice<E,T> root;
     private nodoVertice<E,T> ultimo;
+    private int orden = 0;
 
     public listaAdyacencia(nodoVertice<E,T> root){
         this.root = root;
@@ -8,7 +9,10 @@ public class listaAdyacencia <E,T> {
     }
     public listaAdyacencia(){}
 
+    public nodoVertice<E,T> getRoot(){return root;}
+
     public boolean isEmpty() {return this.root == null;}
+    
     public nodoVertice<E,T> buscarVertice(E value){
         return buscarVertice(value, root);
     }
@@ -23,6 +27,7 @@ public class listaAdyacencia <E,T> {
     }
 
     public void insertVertice(E value){
+        orden = orden+1;
         if (this.isEmpty()){
             root = new nodoVertice<E,T>(value);
             ultimo = root;
@@ -106,6 +111,14 @@ public class listaAdyacencia <E,T> {
    
 
     // Funciones para DFS
+
+    public void empilar(nodoVertice<E, T> nuevo, nodoRecorridos<E, T> base) {
+        nodoRecorridos<E,T> aux = new nodoRecorridos<E,T>(base.getVertice());
+        aux.setNext(base.getNext());
+        base.setVertice(nuevo);
+        base.setNext(aux);
+    }
+
     public void añadirVerticesAColaDFS(nodoVertice<E,T> n, nodoRecorridos<E,T> cola){
         if(n.getAdjacentArista()!=null){
             añadirVerticesAColaDFS(n.getAdjacentArista(), cola);
@@ -120,14 +133,7 @@ public class listaAdyacencia <E,T> {
             añadirVerticesAColaDFS(n.getSiguiente(),cola);
         }
     }
-
-
-    public void empilar(nodoVertice<E, T> nuevo, nodoRecorridos<E, T> base) {
-        nodoRecorridos<E,T> aux = new nodoRecorridos<E,T>(base.getVertice());
-        aux.setNext(base.getNext());
-        base.setVertice(nuevo);
-        base.setNext(aux);
-    }
+   
 
     public void recorridoDFS() {
         nodoRecorridos<E, T> cola = new nodoRecorridos<E, T>(root);
@@ -152,9 +158,10 @@ public class listaAdyacencia <E,T> {
         }
     }
 
-    // Finalizan funciones para bfs
+    // Finalizan funciones para BFS
 
     //Funciones para Dijstra
+
     public void realizarDijstra(){
         root.setAcumulado(0);
         realizarDijstra(root);
@@ -205,21 +212,67 @@ public class listaAdyacencia <E,T> {
 
     // Finalizan funciones para Dijstra
 
-    public void imprimir(){
-        imprimir(root, root.getAdjacentArista(), root);
-    }
-    public void imprimir(nodoVertice<E,T> n, nodoArista<E,T> next, nodoVertice<E,T> aux){
-        System.out.print("--"+n.getValue());
-        if(next != null){
-            System.out.print("--"+next.getValue());
-            imprimir(next.getDireccionVertice(),next.getSiguiente(), aux);
+   
+    //Funciones para hallar si es subgrafo
+
+    public int compararArreglosGrafo(String[] arr1, String[] arr2){
+        int contador = 0;
+        int contador2 = 0;
+        for(int i = 0; i<arr1.length;i++){
+            if(arr2[i]!= null){
+                contador2++;
+            }
         }
-        else if (aux.getNextVertice()!=null){
-            System.out.println("\n");
-            imprimir(aux.getNextVertice(),aux.getNextVertice().getAdjacentArista(),aux.getNextVertice());
+        for(int i = 1; i<arr1.length;i++){
+            for(int j = 1 ; j < arr2.length ; j++){
+                if(arr1[i]!=null && arr2[j]!=null){
+                    if(arr1[i].equals(arr2[j]))
+                        contador++;
+                }
+            }
         }
-        
+        return contador-contador2;
     }
+    public boolean compararArreglosGrafo(String[][] arreglo1, String[][] arreglo2){
+        int contador = 0;
+        for(int i = 0; i<arreglo1.length;i++){
+            for(int j = 0 ; j < arreglo2.length ; j++){
+                if(arreglo1[i][0]!=null && arreglo2[j][0]!=null){
+                    contador=contador+compararArreglosGrafo(arreglo1[i], arreglo2[j]);
+                }
+            }
+        }
+        return contador==0;
+    }
+    public boolean verificarSubgrafo(listaAdyacencia<E,T> n){
+        String[][] grafo1 = this.convertirGrafoaArreglo(this);
+        String[][] grafo2 = n.convertirGrafoaArreglo(n);
+        return compararArreglosGrafo(grafo1, grafo2);
+    }
+
+    public String[][] convertirGrafoaArreglo(listaAdyacencia<E,T> n){
+        String[][] lista= new String[orden][orden];
+        convertirGrafoaArreglo(n.root, lista, 0, 0);
+        return lista;
+    }
+    public void convertirGrafoaArreglo(nodoVertice<E,T> base, String[][] lista, int contador1, int contador2){
+        lista[contador1][contador2] = (String)base.getValue();
+        if(base.getAdjacentArista()!=null){
+            convertirGrafoaArreglo(base.getAdjacentArista(), lista, contador1, contador2+1);
+        }
+        if(base.getNextVertice()!=null){
+            convertirGrafoaArreglo(base.getNextVertice(), lista, contador1+1, contador2);
+        }
+    }
+    public void convertirGrafoaArreglo(nodoArista<E,T> base, String[][] lista, int contador1, int contador2){
+        lista[contador1][contador2] = (String)base.getDireccionVertice().getValue();
+        if(base.getSiguiente()!=null){
+            convertirGrafoaArreglo(base.getSiguiente(), lista, contador1, contador2+1);
+        }
+    }
+
+    // Finalizan funciones para Dijstra
+
     public void vaciarVisitas(){
         vaciarVisitas(root, root.getAdjacentArista(), root);
     }
@@ -232,11 +285,19 @@ public class listaAdyacencia <E,T> {
             vaciarVisitas(aux.getNextVertice(),aux.getNextVertice().getAdjacentArista(),aux.getNextVertice());
         }        
     }
-    
-
-
-
-    
-
-
+    public void imprimir(){
+        imprimir(root, root.getAdjacentArista(), root);
+    }
+    public void imprimir(nodoVertice<E,T> n, nodoArista<E,T> next, nodoVertice<E,T> aux){
+        System.out.print("-->"+n.getValue());
+        if(next != null){
+            System.out.print("<--"+next.getValue());
+            imprimir(next.getDireccionVertice(),next.getSiguiente(), aux);
+        }
+        else if (aux.getNextVertice()!=null){
+            System.out.println("\n");
+            imprimir(aux.getNextVertice(),aux.getNextVertice().getAdjacentArista(),aux.getNextVertice());
+        }
+        
+    }
 }
